@@ -23,3 +23,10 @@ This app is a bill splitting app that helps people split the bill evenly between
    3. Display the balance for each member.
    4. A section for total expenses.
    5. Be able to go back to the home screen from this screen.
+   6. At the bottom, have a plus (+) button that allows you to add an expense.
+4. When in the Expenses screen
+   1. Be able to input the name of the expense.
+   2. Be able to input the amount of the expense.
+   3. Be able to select who paid for the expense.
+   4. Be able to select the participants of the expense to split. Default to all members in the group.
+   5. Have a button at the top right to save the expense.

@@ -13,9 +13,16 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="add-group-members"
-          options={{ title: 'Add Group Members' }}
+          options={{ title: 'Add Group Members', headerShown: false }}
         />
-        <Stack.Screen name="view-group" options={{ title: 'View Group' }} />
+        <Stack.Screen
+          name="view-group"
+          options={{ title: 'View Group', headerShown: false }}
+        />
+        <Stack.Screen
+          name="add-expense"
+          options={{ title: 'Add Expense', headerShown: false }}
+        />
       </Stack>
     </TamaguiProvider>
   );

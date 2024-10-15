@@ -7,10 +7,18 @@ interface Member {
   name: string;
 }
 
+interface Expense {
+  id: string;
+  description: string;
+  amount: number;
+  createdAt: number;
+}
+
 interface Group {
   id: string;
   name: string;
   members: Member[];
+  expenses: Expense[];
 }
 
 export async function getGroups(): Promise<Group[]> {
@@ -43,6 +51,37 @@ export async function removeGroup(groupId: string): Promise<void> {
     await AsyncStorage.setItem(GROUPS_KEY, JSON.stringify(updatedGroups));
   } catch (error) {
     console.error('Failed to remove group', error);
+    throw error;
+  }
+}
+
+export async function addExpense(
+  groupId: string,
+  description: string,
+  amount: number
+): Promise<Expense> {
+  try {
+    const groups = await getGroups();
+    const groupIndex = groups.findIndex((group) => group.id === groupId);
+
+    if (groupIndex === -1) {
+      throw new Error('Group not found');
+    }
+
+    const newExpense: Expense = {
+      id: Date.now().toString(),
+      description,
+      amount,
+      createdAt: Date.now(),
+    };
+
+    groups[groupIndex].expenses = groups[groupIndex].expenses || [];
+    groups[groupIndex].expenses.push(newExpense);
+
+    await AsyncStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
+    return newExpense;
+  } catch (error) {
+    console.error('Failed to add expense', error);
     throw error;
   }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { YStack, XStack, Button, Text, ScrollView, Input } from 'tamagui';
+import { YStack, XStack, Button, Text, ScrollView } from 'tamagui';
 import { Plus, Minus } from '@tamagui/lucide-icons';
 import { getGroups, removeGroup } from '../utils/database';
 import { useRouter } from 'expo-router';
@@ -23,7 +23,7 @@ export function HomeScreen() {
   };
 
   const handleAddGroup = () => {
-    router.push('/add-group-name');
+    router.replace('/add-group-name');
   };
 
   const handleRemoveGroup = async (groupId: string) => {
@@ -32,7 +32,7 @@ export function HomeScreen() {
   };
 
   const handleViewGroup = (groupId: string) => {
-    router.push({ pathname: '/view-group', params: { groupId } });
+    router.replace({ pathname: '/view-group', params: { groupId } });
   };
 
   return (
