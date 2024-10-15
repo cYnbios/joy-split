@@ -1,5 +1,5 @@
 import React from 'react';
-import { YStack, Text, Button, ScrollView } from 'tamagui';
+import { YStack, Text, Button, ScrollView, XStack } from 'tamagui';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { getGroups } from '../utils/database';
 import { Plus } from '@tamagui/lucide-icons';
@@ -36,16 +36,27 @@ export function ViewGroupScreen() {
       </ScrollView>
       <Text>Total Expenses: {/* Display total expenses here */}</Text>
       <Button onPress={() => router.replace('/')}>Back to Home</Button>
-      <Button
-        icon={Plus}
-        onPress={() =>
-          router.replace({ pathname: '/add-expense', params: { groupId } })
-        }
-        theme="active"
-        marginTop="$4"
-      >
-        Add Expense
-      </Button>
+      <XStack space="$2" marginTop="$4">
+        <Button
+          flex={1}
+          icon={Plus}
+          onPress={() =>
+            router.replace({ pathname: '/add-expense', params: { groupId } })
+          }
+          theme="active"
+        >
+          Add Expense
+        </Button>
+        <Button
+          flex={1}
+          onPress={() =>
+            router.replace({ pathname: '/view-expenses', params: { groupId } })
+          }
+          theme="blue"
+        >
+          View Expenses
+        </Button>
+      </XStack>
     </YStack>
   );
 }
