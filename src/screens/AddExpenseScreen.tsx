@@ -1,24 +1,82 @@
-import React, { useState } from 'react';
-import { YStack, Text, Input, Button } from 'tamagui';
+import React, { useState, useEffect } from 'react';
+import { YStack, Input, Button, Text } from 'tamagui';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { addExpense } from '../utils/database';
+import { addExpense, getGroup } from '../utils/database';
 
 export function AddExpenseScreen() {
+  const [expenseName, setExpenseName] = useState('');
+  const [expenseAmount, setExpenseAmount] = useState('');
+  const [payer, setPayer] = useState({ id: '', name: '' });
+  const [members, setMembers] = useState<{ id: string; name: string }[]>([]);
   const router = useRouter();
-  const { groupId } = useLocalSearchParams();
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
+  const {
+    groupId,
+    payerId,
+    payerName,
+    expenseName: expenseNameParam,
+    expenseAmount: expenseAmountParam,
+  } = useLocalSearchParams<{
+    groupId: string;
+    payerId?: string;
+    payerName?: string;
+    expenseName?: string;
+    expenseAmount?: string;
+  }>();
 
-  const handleAddExpense = async () => {
-    if (description && amount) {
-      try {
-        await addExpense(groupId as string, description, parseFloat(amount));
-        router.back();
-      } catch (error) {
-        console.error('Error adding expense:', error);
-        // You might want to show an error message to the user here
+  useEffect(() => {
+    const loadMembers = async () => {
+      const group = await getGroup(groupId);
+      if (group) {
+        setMembers(group.members);
       }
+    };
+    loadMembers();
+  }, [groupId]);
+
+  useEffect(() => {
+    if (payerId && payerName) {
+      setPayer({ id: payerId, name: payerName });
     }
+    if (expenseNameParam) {
+      setExpenseName(expenseNameParam);
+    }
+    if (expenseAmountParam) {
+      setExpenseAmount(expenseAmountParam);
+    }
+  }, [payerId, payerName, expenseNameParam, expenseAmountParam]);
+
+  const handleSelectPayer = () => {
+    router.replace({
+      pathname: '/select-payer',
+      params: { groupId, expenseName, expenseAmount },
+    });
+  };
+
+  const handleSave = async () => {
+    if (!expenseName.trim() || !expenseAmount.trim() || !payer.id) {
+      // Show an error message or alert
+      return;
+    }
+
+    try {
+      const amount = parseFloat(expenseAmount);
+      if (isNaN(amount)) {
+        // Show an error message for invalid amount
+        return;
+      }
+
+      await addExpense(groupId, expenseName, amount, payer.id);
+
+      // Navigate back to the group view
+      router.replace({ pathname: '/view-group', params: { groupId } });
+    } catch (error) {
+      console.error('Failed to save expense', error);
+      // Show an error message to the user
+    }
+  };
+
+  const handleCancel = () => {
+    router.replace({ pathname: '/view-group', params: { groupId } });
   };
 
   return (
@@ -27,26 +85,23 @@ export function AddExpenseScreen() {
         Add Expense
       </Text>
       <Input
-        placeholder="Description"
-        value={description}
-        onChangeText={setDescription}
+        value={expenseName}
+        onChangeText={setExpenseName}
+        placeholder="Expense Name"
       />
       <Input
-        placeholder="Amount"
-        value={amount}
-        onChangeText={setAmount}
+        value={expenseAmount}
+        onChangeText={setExpenseAmount}
+        placeholder="Amount ($)"
         keyboardType="numeric"
       />
-      <Button onPress={handleAddExpense} theme="active">
-        Add Expense
+      <Button onPress={handleSelectPayer}>
+        {payer.name ? `Paid by: ${payer.name}` : 'Select Payer'}
       </Button>
-      <Button
-        onPress={() =>
-          router.replace({ pathname: '/view-group', params: { groupId } })
-        }
-      >
-        Cancel
+      <Button onPress={handleSave} theme="active">
+        Save
       </Button>
+      <Button onPress={handleCancel}>Cancel</Button>
     </YStack>
   );
 }

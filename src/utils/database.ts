@@ -12,6 +12,7 @@ interface Expense {
   description: string;
   amount: number;
   createdAt: number;
+  paidBy: string; // ID of the member who paid
 }
 
 interface Group {
@@ -19,6 +20,16 @@ interface Group {
   name: string;
   members: Member[];
   expenses: Expense[];
+}
+
+export async function getGroup(groupId: string): Promise<Group | null> {
+  try {
+    const groups = await getGroups();
+    return groups.find((group) => group.id === groupId) || null;
+  } catch (error) {
+    console.error('Failed to get group', error);
+    return null;
+  }
 }
 
 export async function getGroups(): Promise<Group[]> {
@@ -58,7 +69,8 @@ export async function removeGroup(groupId: string): Promise<void> {
 export async function addExpense(
   groupId: string,
   description: string,
-  amount: number
+  amount: number,
+  paidBy: string
 ): Promise<Expense> {
   try {
     const groups = await getGroups();
@@ -73,6 +85,7 @@ export async function addExpense(
       description,
       amount,
       createdAt: Date.now(),
+      paidBy,
     };
 
     groups[groupIndex].expenses = groups[groupIndex].expenses || [];

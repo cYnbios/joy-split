@@ -27,7 +27,7 @@ export function AddGroupMembersScreen() {
 
   const createGroup = async () => {
     try {
-      await addGroup({ name: groupName, members });
+      await addGroup({ name: groupName, members, expenses: [] });
       // Reset the navigation stack and go to the home screen
       router.replace('/');
     } catch (error) {
