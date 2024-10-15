@@ -24,6 +24,7 @@ export function ViewGroupScreen() {
 
   return (
     <YStack flex={1} padding="$4">
+      <Button onPress={() => router.replace('/')}>Back to Home</Button>
       <Text fontSize="$6" fontWeight="bold">
         {group.name}
       </Text>
@@ -34,8 +35,16 @@ export function ViewGroupScreen() {
           </Text>
         ))}
       </ScrollView>
+      <Button
+        onPress={() =>
+          router.replace({ pathname: '/settle-up', params: { groupId } })
+        }
+        theme="green"
+        marginVertical="$2"
+      >
+        Settle Up
+      </Button>
       <Text>Total Expenses: {/* Display total expenses here */}</Text>
-      <Button onPress={() => router.replace('/')}>Back to Home</Button>
       <XStack space="$2" marginTop="$4">
         <Button
           flex={1}

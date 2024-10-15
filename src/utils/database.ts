@@ -5,6 +5,7 @@ const GROUPS_KEY = 'groups';
 interface Member {
   id: string;
   name: string;
+  balance: number; // Add this line
 }
 
 interface Expense {
@@ -90,6 +91,23 @@ export async function addExpense(
 
     groups[groupIndex].expenses = groups[groupIndex].expenses || [];
     groups[groupIndex].expenses.push(newExpense);
+
+    // Calculate and update member balances
+    const group = groups[groupIndex];
+    const totalExpenses = group.expenses.reduce(
+      (sum, exp) => sum + exp.amount,
+      0
+    );
+    const splitAmount = totalExpenses / group.members.length;
+
+    group.members = group.members.map((member) => {
+      const paidTotal = group.expenses
+        .filter((exp) => exp.paidBy === member.id)
+        .reduce((sum, exp) => sum + exp.amount, 0);
+      // Round to two decimal places
+      member.balance = Number((paidTotal - splitAmount).toFixed(2));
+      return member;
+    });
 
     await AsyncStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
     return newExpense;
