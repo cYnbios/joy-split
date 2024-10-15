@@ -28,7 +28,8 @@ export function AddGroupMembersScreen() {
   const createGroup = async () => {
     try {
       await addGroup({ name: groupName, members });
-      router.push('/');
+      // Reset the navigation stack and go to the home screen
+      router.replace('/');
     } catch (error) {
       console.error('Failed to create group', error);
     }
@@ -36,6 +37,10 @@ export function AddGroupMembersScreen() {
 
   return (
     <YStack flex={1} padding="$4" space="$4">
+      <Text fontSize="$6" fontWeight="bold">
+        Add Members to {groupName}
+      </Text>
+
       <XStack space="$2">
         <Input
           flex={1}
@@ -43,7 +48,7 @@ export function AddGroupMembersScreen() {
           onChangeText={setCurrentMember}
           placeholder="Enter member name"
         />
-        <Button onPress={addMember}>Add Member</Button>
+        <Button onPress={addMember}>Add</Button>
       </XStack>
       <ScrollView>
         {members.map((member) => (

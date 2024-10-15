@@ -3,8 +3,6 @@ import { YStack, XStack, Button, Text, ScrollView, Input } from 'tamagui';
 import { Plus, Minus } from '@tamagui/lucide-icons';
 import { getGroups, removeGroup } from '../utils/database';
 import { useRouter } from 'expo-router';
-import { Modal } from 'react-native';
-import { addGroup } from '../utils/database';
 
 interface Group {
   id: string;
@@ -13,8 +11,6 @@ interface Group {
 
 export function HomeScreen() {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [newGroupName, setNewGroupName] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -27,17 +23,7 @@ export function HomeScreen() {
   };
 
   const handleAddGroup = () => {
-    setModalVisible(true); // Show the modal
-  };
-
-  const handleCreateGroup = async () => {
-    if (newGroupName.trim()) {
-      // Add logic to create the group in the database
-      await addGroup({ name: newGroupName, members: [] }); // Uncomment this line if you have an addGroup function
-      setNewGroupName(''); // Clear the input
-      setModalVisible(false); // Close the modal
-      loadGroups(); // Refresh the group list
-    }
+    router.push('/add-group-name');
   };
 
   const handleRemoveGroup = async (groupId: string) => {
@@ -91,21 +77,6 @@ export function HomeScreen() {
           </ScrollView>
         </>
       )}
-
-      {/* Modal for adding a new group */}
-      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <YStack flex={1} padding="$4" space="$4" backgroundColor="white">
-          <Input
-            value={newGroupName}
-            onChangeText={setNewGroupName}
-            placeholder="Enter group name"
-          />
-          <XStack space="$2">
-            <Button onPress={() => setModalVisible(false)}>Cancel</Button>
-            <Button onPress={handleCreateGroup}>Next</Button>
-          </XStack>
-        </YStack>
-      </Modal>
     </YStack>
   );
 }
