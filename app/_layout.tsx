@@ -6,7 +6,10 @@ export default function RootLayout() {
   return (
     <TamaguiProvider config={config}>
       <Stack>
-        <Stack.Screen name="index" options={{ title: 'Home' }} />
+        <Stack.Screen
+          name="index"
+          options={{ title: 'Home', headerShown: false }}
+        />
         <Stack.Screen
           name="add-group-name"
           options={{ title: 'Add Group Name' }}
